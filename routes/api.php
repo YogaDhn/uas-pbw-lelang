@@ -17,6 +17,10 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
     Route::post(
+    '/auctions/{auction}/close',
+    [AuctionController::class,'closeAuction']
+);
+    Route::post(
         '/auctions/{auction}/bid',
         [BidController::class, 'store']
     );
@@ -25,4 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
         '/auctions/{auction}/bids',
         [BidController::class, 'history']
     );
+    Route::get(
+    '/auctions/{auction}/winner',
+    [AuctionController::class, 'winner']
+);
 });

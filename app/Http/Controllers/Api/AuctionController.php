@@ -48,6 +48,29 @@ class AuctionController extends Controller
         ]);
     }
 
+  public function closeAuction(Auction $auction)
+{
+    $highestBid = $auction->bids()
+        ->orderByDesc('amount')
+        ->first();
+
+    if($highestBid)
+    {
+        $highestBid->update([
+            'is_winner' => true
+        ]);
+    }
+
+    $auction->update([
+    'status' => 'ended'
+]);
+
+    return response()->json([
+        'message' => 'Auction closed',
+        'winner' => $highestBid
+    ]);
+}
+
     public function update(Request $request, Auction $auction)
     {
         // Otorisasi pemilik
@@ -91,4 +114,24 @@ class AuctionController extends Controller
             'message' => 'Auction berhasil dihapus'
         ]);
     }
+
+    public function winner(Auction $auction)
+{
+    $winnerBid = $auction->bids()
+        ->with('user')
+        ->where('is_winner', true)
+        ->first();
+
+    if (!$winnerBid) {
+        return response()->json([
+            'message' => 'Belum ada pemenang'
+        ]);
+    }
+
+    return response()->json([
+        'auction' => $auction->title,
+        'winner' => $winnerBid->user->name,
+        'winning_bid' => $winnerBid->amount
+    ]);
+}
 }
