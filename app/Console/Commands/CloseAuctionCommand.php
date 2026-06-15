@@ -6,7 +6,7 @@ use App\Models\Auction;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-
+use App\Events\AuctionEnded;
 #[Signature('app:close-auction-command')]
 #[Description('Menutup auction yang sudah lewat waktu')]
 class CloseAuctionCommand extends Command
@@ -25,26 +25,27 @@ class CloseAuctionCommand extends Command
         ->get();
 
         foreach ($auctions as $auction)
-        {
-            $highestBid = $auction->bids()
-                ->orderByDesc('amount')
-                ->first();
-
-            if ($highestBid)
 {
     $auction->bids()->update([
         'is_winner' => false
     ]);
 
-    $highestBid->update([
-        'is_winner' => true
-    ]);
-}
+    $highestBid = $auction->bids()
+        ->orderByDesc('amount')
+        ->first();
 
-            $auction->update([
-                'status' => 'ended'
-            ]);
-        }
+    if ($highestBid)
+    {
+        $highestBid->update([
+            'is_winner' => true
+        ]);
+    }
+
+    $auction->update([
+        'status' => 'ended'
+    ]);
+    event(new AuctionEnded($auction));
+}
 
         $this->info(
             'Auction selesai diperiksa.'

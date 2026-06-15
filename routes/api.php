@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     '/auctions/{auction}/close',
     [AuctionController::class,'closeAuction']
 );
+
     Route::post(
         '/auctions/{auction}/bid',
         [BidController::class, 'store']

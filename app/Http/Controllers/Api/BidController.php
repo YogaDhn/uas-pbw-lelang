@@ -7,72 +7,112 @@ use App\Models\Auction;
 use App\Events\BidPlaced;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use App\Events\OutbidNotification;
+use Illuminate\Support\Facades\DB;
 class BidController extends Controller
 {
     public function store(
-        Request $request,
-        Auction $auction
-    )
+    Request $request,
+    Auction $auction
+)
+{
+    $request->validate([
+        'amount' => 'required|numeric'
+    ]);
+
+    $highestBid = $auction->bids()
+        ->orderByDesc('amount')
+        ->first();
+
+    $oldHighestBid = $highestBid;
+
+    if($auction->status != 'active')
     {
-        $request->validate([
-            'amount' => 'required|numeric'
-        ]);
+        return response()->json([
+            'message' => 'Auction tidak aktif'
+        ],403);
+    }
+
+    if($auction->user_id == auth()->id())
+    {
+        return response()->json([
+            'message' => 'Tidak boleh menawar lelang sendiri'
+        ],403);
+    }
+
+    $minimumBid = $highestBid
+        ? $highestBid->amount + $auction->bid_increment
+        : $auction->starting_price;
+
+    if ($request->amount < $minimumBid)
+    {
+        return response()->json([
+            'message' => 'Bid terlalu rendah',
+            'minimum_bid' => $minimumBid
+        ], 422);
+    }
+
+    try {
+
+    $bid = DB::transaction(function () use (
+        $auction,
+        $request
+    ) {
 
         $highestBid = $auction->bids()
+            ->lockForUpdate()
             ->orderByDesc('amount')
             ->first();
-            if($auction->status != 'active')
-{
-    return response()->json([
-        'message' => 'Auction tidak aktif'
-    ],403);
-}
-if($auction->user_id == auth()->id())
-{
-    return response()->json([
-        'message' => 'Tidak boleh menawar lelang sendiri'
-    ],403);
-}
 
         $minimumBid = $highestBid
             ? $highestBid->amount + $auction->bid_increment
             : $auction->starting_price;
 
         if ($request->amount < $minimumBid) {
-
-            return response()->json([
-                'message' => 'Bid terlalu rendah',
-                'minimum_bid' => $minimumBid
-            ], 422);
+            throw new \Exception(
+                'Bid terlalu rendah'
+            );
         }
 
-       $bid = Bid::create([
-    'auction_id' => $auction->id,
-    'user_id' => auth()->id(),
-    'amount' => $request->amount,
-    'is_winner' => false
-]);
-
-event(new BidPlaced($bid));
-\Log::info('BidPlaced Event Fired', [
-    'bid_id' => $bid->id,
-    'auction_id' => $auction->id,
-    'amount' => $bid->amount
-]);
-        return response()->json([
-            'message' => 'Bid berhasil',
-            'data' => $bid
+        return Bid::create([
+            'auction_id' => $auction->id,
+            'user_id' => auth()->id(),
+            'amount' => $request->amount,
+            'is_winner' => false
         ]);
-    }
+    });
 
-    public function history(
-        Auction $auction
+} catch (\Exception $e) {
+
+    return response()->json([
+        'message' => $e->getMessage()
+    ], 422);
+
+}
+
+    event(new BidPlaced($bid));
+
+    if (
+        $oldHighestBid &&
+        $oldHighestBid->user_id != auth()->id()
     )
     {
-        return $auction->bids()
-            ->with('user')
-            ->orderByDesc('amount')
-            ->get();
+        event(
+            new OutbidNotification(
+                $oldHighestBid,
+                $bid
+            )
+        );
     }
-}
+
+    \Log::info('BidPlaced Event Fired', [
+        'bid_id' => $bid->id,
+        'auction_id' => $auction->id,
+        'amount' => $bid->amount
+    ]);
+
+    return response()->json([
+        'message' => 'Bid berhasil',
+        'data' => $bid
+    ]);
+}}
