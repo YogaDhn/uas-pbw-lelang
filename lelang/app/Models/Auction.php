@@ -22,7 +22,10 @@ public function user()
 {
     return $this->belongsTo(User::class);
 }
-
+protected $casts = [
+    'end_time' => 'datetime',
+    'start_time' => 'datetime',
+];
 public function bids()
 {
     return $this->hasMany(Bid::class);

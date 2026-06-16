@@ -13,57 +13,63 @@ use App\Events\AuctionEnded;
 class CloseAuctionCommand extends Command
 {
     public function handle()
-    {
-        $auctions = Auction::where(
-            'status',
-            'active'
-        )
-        ->where(
-            'end_time',
-            '<=',
-            now()
-        )
+{
+    \Log::info('COMMAND RUNNING');
+
+    $auctions = Auction::where('status', 'active')
+        ->where('end_time', '<=', now())
         ->get();
 
-        foreach ($auctions as $auction)
-{
-    $highestBid = $auction->bids()
-        ->with('user')
-        ->orderByDesc('amount')
-        ->first();
-
-    if ($highestBid)
-    {
-        $auction->bids()->update([
-            'is_winner' => false
-        ]);
-
-        $highestBid->update([
-            'is_winner' => true
-        ]);
-
-        event(
-            new AuctionEnded(
-                $auction,
-                $highestBid
-            )
-        );
-
-        \Log::info(
-            'AUCTION ENDED EVENT FIRED',
-            [
-                'auction_id' => $auction->id
-            ]
-        );
-    }
-
-    $auction->update([
-        'status' => 'ended'
+    \Log::info('AUCTION FOUND', [
+        'count' => $auctions->count()
     ]);
-}
 
-        $this->info(
-            'Auction selesai diperiksa.'
-        );
+    foreach ($auctions as $auction)
+    {
+        \Log::info('CHECK AUCTION', [
+            'auction_id' => $auction->id
+        ]);
+
+        $highestBid = $auction->bids()
+            ->with('user')
+            ->orderBy('amount', 'desc')
+            ->first();
+
+        \Log::info('HIGHEST BID CHECK', [
+            'auction_id' => $auction->id,
+            'bid_exists' => $highestBid ? true : false
+        ]);
+
+        if ($highestBid)
+        {
+            $highestBid->load('user');
+
+            \Log::info('WINNER DATA', [
+                'auction_id' => $auction->id,
+                'user' => $highestBid->user->name ?? null,
+                'amount' => $highestBid->amount ?? null
+            ]);
+
+            $auction->bids()->update([
+                'is_winner' => false
+            ]);
+
+            $highestBid->update([
+                'is_winner' => true
+            ]);
+
+            event(new AuctionEnded($auction, $highestBid));
+        }
+
+        $auction->update([
+            'status' => 'ended'
+        ]);
+
+        \Log::info('AUCTION ENDED EVENT FIRED', [
+            'auction_id' => $auction->id
+        ]);
     }
+
+    $this->info('Auction selesai diperiksa.');
+}
 }

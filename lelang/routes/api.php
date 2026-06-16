@@ -25,6 +25,11 @@ Route::middleware('auth:sanctum')->group(function () {
         '/auctions/{auction}/bid',
         [BidController::class, 'store']
     );
+    
+    Route::post(
+        '/auctions/{auction}/bids',
+        [BidController::class, 'store']
+    );
 
     Route::get(
         '/auctions/{auction}/bids',

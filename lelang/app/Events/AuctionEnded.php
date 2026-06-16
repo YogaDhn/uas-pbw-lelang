@@ -39,17 +39,15 @@ class AuctionEnded implements ShouldBroadcast
         return 'auction.ended';
     }
 
-    public function broadcastWith(): array
-    {
-        return [
-            'auction_id' => $this->auction->id,
-            'auction_title' => $this->auction->title,
-            'winner' => $this->winner
-                ? $this->winner->user->name
-                : null,
-            'winning_bid' => $this->winner
-                ? $this->winner->amount
-                : null
-        ];
-    }
+public function broadcastWith(): array
+{
+    return [
+        'auction_id' => $this->auction->id,
+        'auction_title' => $this->auction->title,
+
+        'winner' => optional($this->winner->user)->name ?? 'Tidak ada pemenang',
+
+        'winning_bid' => $this->winner->amount ?? 0,
+    ];
+}
 }

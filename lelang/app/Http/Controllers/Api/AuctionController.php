@@ -33,16 +33,37 @@ class AuctionController extends Controller
     return response()->json($auction, 201);
 }
 
-    public function show(Auction $auction)
+   public function show(Auction $auction)
 {
     $auction->load([
         'user',
-        'bids' => function ($query) {
-            $query->orderByDesc('amount');
-        }
+        'bids.user'
     ]);
 
-    return $auction;
+    $highestBid = $auction->bids()
+        ->with('user')
+        ->orderByDesc('amount')
+        ->first();
+
+    return response()->json([
+        'id' => $auction->id,
+        'title' => $auction->title,
+        'description' => $auction->description,
+        'starting_price' => $auction->starting_price,
+        'bid_increment' => $auction->bid_increment,
+        'status' => $auction->status,
+        'end_time' => $auction->end_time,
+        'bids' => $auction->bids,
+
+        
+        'winner' => $auction->status === 'ended'
+            ? ($highestBid?->user?->name)
+            : null,
+
+        'winning_bid' => $auction->status === 'ended'
+            ? ($highestBid?->amount)
+            : null,
+    ]);
 }
 
   public function closeAuction(Auction $auction)
