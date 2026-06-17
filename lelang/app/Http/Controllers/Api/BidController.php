@@ -65,7 +65,11 @@ class BidController extends Controller
                 'is_winner' => false
             ]);
 
-            event(new BidPlaced($bid));
+            \Log::info('EVENT BIDPLACED DIPANGGIL');
+
+event(new BidPlaced($bid));
+
+\Log::info('EVENT BIDPLACED SELESAI');
 
             if (
                 $oldHighestBid &&

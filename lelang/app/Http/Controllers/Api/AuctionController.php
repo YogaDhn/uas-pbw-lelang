@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreAuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
 use App\Events\AuctionEnded;
+use Carbon\Carbon;
 class AuctionController extends Controller
 {
     public function index()
@@ -17,17 +18,29 @@ class AuctionController extends Controller
                       ->get();
     }
 
-    public function store(StoreAuctionRequest $request)
+public function store(StoreAuctionRequest $request)
 {
+    $imagePath = null;
+
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')
+            ->store('auctions', 'public');
+    }
+
+    
     $auction = Auction::create([
         'user_id' => auth()->id(),
         'title' => $request->title,
         'description' => $request->description,
+        'image' => $imagePath,
         'starting_price' => $request->starting_price,
         'bid_increment' => $request->bid_increment,
         'start_time' => $request->start_time,
         'end_time' => $request->end_time,
-        'status' => 'scheduled'
+        'status' => now()->between(
+            $request->start_time,
+            $request->end_time
+        ) ? 'active' : 'scheduled'
     ]);
 
     return response()->json($auction, 201);
@@ -35,6 +48,7 @@ class AuctionController extends Controller
 
    public function show(Auction $auction)
 {
+    $auction->updateStatus();
     $auction->load([
         'user',
         'bids.user'
@@ -53,9 +67,11 @@ class AuctionController extends Controller
         'bid_increment' => $auction->bid_increment,
         'status' => $auction->status,
         'end_time' => $auction->end_time,
-        'bids' => $auction->bids,
+        'bids' => $auction->bids()
+    ->orderByDesc('amount')
+    ->get(),
+        'user_id' => $auction->user_id,
 
-        
         'winner' => $auction->status === 'ended'
             ? ($highestBid?->user?->name)
             : null,
@@ -64,6 +80,16 @@ class AuctionController extends Controller
             ? ($highestBid?->amount)
             : null,
     ]);
+}
+
+public function myAuctions()
+{
+    return Auction::where(
+        'user_id',
+        auth()->id()
+    )
+    ->latest()
+    ->get();
 }
 
   public function closeAuction(Auction $auction)

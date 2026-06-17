@@ -5,11 +5,13 @@ namespace App\Events;
 use App\Models\Bid;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+// use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class BidPlaced implements ShouldBroadcast
+class BidPlaced implements ShouldBroadcastNow
+
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -28,6 +30,18 @@ class BidPlaced implements ShouldBroadcast
             ),
         ];
     }
+    public function broadcastWith(): array
+{
+    \Log::info('BROADCAST BIDPLACED', [
+        'auction_id' => $this->bid->auction_id,
+        'amount' => $this->bid->amount,
+    ]);
+
+    return [
+        'auction_id' => $this->bid->auction_id,
+        'amount' => $this->bid->amount,
+    ];
+}
 
     public function broadcastAs(): string
     {

@@ -14,12 +14,12 @@ class UpdateAuctionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'starting_price' => 'sometimes|numeric|min:1',
-            'bid_increment' => 'sometimes|numeric|min:1',
-            'start_time' => 'sometimes|date',
-            'end_time' => 'sometimes|date'
+           'title' => 'required',
+        'description' => 'required',
+        'starting_price' => 'required|numeric',
+        'bid_increment' => 'required|numeric',
+        'start_time' => 'required',
+        'end_time' => 'required'
         ];
     }
 }

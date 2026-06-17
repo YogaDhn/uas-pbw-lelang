@@ -28,6 +28,13 @@ class BidPlaced implements ShouldBroadcast
             ),
         ];
     }
+    public function broadcastWith(): array
+{
+    return [
+        'auction_id' => $this->bid->auction_id,
+        'amount' => $this->bid->amount,
+    ];
+}
 
     public function broadcastAs(): string
     {

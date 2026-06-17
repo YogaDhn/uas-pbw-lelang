@@ -21,6 +21,11 @@ Route::middleware('auth:sanctum')->group(function () {
     [AuctionController::class,'closeAuction']
 );
 
+Route::middleware('auth:sanctum')->get(
+    '/my-auctions',
+    [AuctionController::class, 'myAuctions']
+);
+
     Route::post(
         '/auctions/{auction}/bid',
         [BidController::class, 'store']
