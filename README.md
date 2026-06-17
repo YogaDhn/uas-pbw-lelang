@@ -228,4 +228,164 @@ php artisan migrate:fresh --seed
 ```
 
 ---
+▶️ Menjalankan Aplikasi
+Backend Server
+cd lelang
+php artisan serve
 
+Aplikasi backend berjalan pada:
+
+http://127.0.0.1:8000
+Frontend Server
+cd frontend
+npm run dev
+
+Aplikasi frontend berjalan pada:
+
+http://localhost:5173
+Queue Worker
+
+Digunakan untuk memproses job dan event queue.
+
+php artisan queue:work
+Scheduler
+
+Digunakan untuk memperbarui status lelang dan menutup lelang secara otomatis.
+
+php artisan schedule:work
+Laravel Reverb
+
+Digunakan untuk komunikasi realtime.
+
+php artisan reverb:start
+
+🔑 Akun Demo
+Penjual
+Email	Password
+yoga@gmail.com	password
+Penawar
+Email	Password
+stella@gmail.com	password
+
+🗃️ Entity Relationship Diagram (ERD)
+Tabel Users
+Field	Tipe
+id	bigint
+name	varchar
+email	varchar
+password	varchar
+created_at	timestamp
+updated_at	timestamp
+Tabel Auctions
+Field	Tipe
+id	bigint
+user_id	bigint
+title	varchar
+description	text
+image	varchar
+starting_price	decimal
+bid_increment	decimal
+start_time	datetime
+end_time	datetime
+status	varchar
+created_at	timestamp
+updated_at	timestamp
+Tabel Bids
+Field	Tipe
+id	bigint
+auction_id	bigint
+user_id	bigint
+amount	decimal
+is_winner	boolean
+created_at	timestamp
+updated_at	timestamp
+Relasi Antar Tabel
+USERS
+│
+├──< AUCTIONS
+│
+└──< BIDS
+
+AUCTIONS
+│
+└──< BIDS
+ERD Diagram
++-------------------+
+|       USERS       |
++-------------------+
+| id (PK)           |
+| name              |
+| email             |
+| password          |
++-------------------+
+          |
+          | 1
+          |
+          | N
++-------------------+
+|     AUCTIONS      |
++-------------------+
+| id (PK)           |
+| user_id (FK)      |
+| title             |
+| description       |
+| image             |
+| starting_price    |
+| bid_increment     |
+| start_time        |
+| end_time          |
+| status            |
++-------------------+
+          |
+          | 1
+          |
+          | N
++-------------------+
+|       BIDS        |
++-------------------+
+| id (PK)           |
+| auction_id (FK)   |
+| user_id (FK)      |
+| amount            |
+| is_winner         |
++-------------------+
+          ^
+          |
+          |
+        USERS
+📂 Struktur Folder
+Project_UAS_PBW
+│
+├── lelang
+│   ├── app
+│   ├── config
+│   ├── database
+│   ├── routes
+│   ├── storage
+│   └── public
+│
+└── frontend
+    ├── src
+    │   ├── views
+    │   ├── router
+    │   ├── stores
+    │   ├── services
+    │   └── assets
+    │
+    └── public
+    
+🧪 Skenario Pengujian
+Login sebagai Penjual.
+Membuat barang lelang baru.
+Login sebagai Penawar pada browser berbeda.
+Membuka halaman detail lelang yang sama.
+Melakukan bid.
+Bid tertinggi diperbarui secara realtime.
+Sistem mengirim notifikasi ketika bid dikalahkan.
+Setelah waktu lelang berakhir, sistem menentukan pemenang secara otomatis.
+
+📌 Catatan
+Untuk menjalankan seluruh fitur realtime secara optimal, pastikan backend, frontend, queue worker, scheduler, dan Laravel Reverb berjalan secara bersamaan.
+
+📄 Lisensi
+Proyek ini dibuat untuk memenuhi tugas Ujian Akhir Semester (UAS) Mata Kuliah Pemrograman Berbasis Web.
