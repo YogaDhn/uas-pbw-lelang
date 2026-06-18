@@ -287,51 +287,85 @@ password
 
 ---
 
-# 📸 Dokumentasi Tampilan Sistem
+# 🗃️ Entity Relationship Diagram (ERD)
 
-## Login
-
-<p align="center">
-  <img src="docs/login.png" width="100%">
-</p>
-
-## Register
+ERD berikut menggambarkan hubungan antara entitas **Users**, **Auctions**, dan **Bids** pada sistem lelang online.
 
 <p align="center">
-  <img src="docs/register.png" width="100%">
+  <img src="docs/erd.png" alt="ERD Online Auction System" width="100%">
 </p>
 
-## Daftar Lelang
+## Relasi Antar Entitas
 
-<p align="center">
-  <img src="docs/auction-list.png" width="100%">
-</p>
+### Users → Auctions
 
-## Detail Lelang
+Satu pengguna dapat membuat banyak lelang.
 
-<p align="center">
-  <img src="docs/auction-detail.png" width="100%">
-</p>
+```text
+Users (1) -------- (N) Auctions
+```
 
-## Buat Lelang
+### Users → Bids
 
-<p align="center">
-  <img src="docs/create-auction.png" width="100%">
-</p>
+Satu pengguna dapat melakukan banyak penawaran (bid).
 
-## Lelang Saya
+```text
+Users (1) -------- (N) Bids
+```
 
-<p align="center">
-  <img src="docs/my-auctions.png" width="100%">
-</p>
+### Auctions → Bids
 
-## Pemenang Lelang
+Satu lelang dapat memiliki banyak penawaran.
 
-<p align="center">
-  <img src="docs/winner.png" width="100%">
-</p>
+```text
+Auctions (1) -------- (N) Bids
+```
 
----
+## Struktur Tabel
+
+### Users
+
+| Field      | Tipe      |
+| ---------- | --------- |
+| id         | bigint    |
+| name       | varchar   |
+| email      | varchar   |
+| password   | varchar   |
+| created_at | timestamp |
+| updated_at | timestamp |
+
+### Auctions
+
+| Field          | Tipe      |
+| -------------- | --------- |
+| id             | bigint    |
+| user_id        | bigint    |
+| title          | varchar   |
+| description    | text      |
+| image          | varchar   |
+| starting_price | decimal   |
+| bid_increment  | decimal   |
+| start_time     | datetime  |
+| end_time       | datetime  |
+| status         | varchar   |
+| created_at     | timestamp |
+| updated_at     | timestamp |
+
+### Bids
+
+| Field      | Tipe      |
+| ---------- | --------- |
+| id         | bigint    |
+| auction_id | bigint    |
+| user_id    | bigint    |
+| amount     | decimal   |
+| is_winner  | boolean   |
+| created_at | timestamp |
+| updated_at | timestamp |
+
+```
+```
+
 
 # 🧪 Skenario Pengujian
 
