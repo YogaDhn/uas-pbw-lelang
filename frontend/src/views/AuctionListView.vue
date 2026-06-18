@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import api from "../services/api";
-import { computed } from "vue";
+
 
 const router = useRouter();
 
 const auctions = ref<unknown[]>([]);
+const search = ref("");
 const loading = ref(true);
 
 
@@ -17,13 +18,9 @@ const loadAuctions = async () => {
   auctions.value = res.data;
   loading.value = false;
 };
-const currentUser = JSON.parse(
-  localStorage.getItem("user") || "{}"
-);
 
-const isOwner = computed(() => {
-  return auction.value?.user_id === currentUser.id;
-});
+
+
 
 const getHighestBid = (auction: unknown) => {
   if (!auction.bids || auction.bids.length === 0) {
@@ -49,9 +46,25 @@ const logout = async () => {
   router.push("/login");
 };
 
+const filteredAuctions = computed(() => {
+
+  if (!search.value) {
+    return auctions.value;
+  }
+
+  return auctions.value.filter((auction: any) =>
+    auction.title
+      .toLowerCase()
+      .includes(search.value.toLowerCase())
+  );
+
+});
+
 onMounted(() => {
   loadAuctions();
 });
+
+
 </script>
 
 <template>
@@ -74,24 +87,37 @@ onMounted(() => {
   <div class="header-left">
     <h1>🏷️ Daftar Lelang</h1>
     <p>Temukan barang lelang terbaik dan ikut bid sekarang</p>
-    <div class="actions">
+  <div class="search-actions">
 
-  <router-link
-  to="/auctions/create"
-  class="btn-primary"
->
-  Buat Lelang
-</router-link>
+  <div class="search-box">
+    <input
+      v-model="search"
+      type="text"
+      placeholder="🔍 Cari barang lelang..."
+    />
+  </div>
 
-  <router-link
-    to="/my-auctions"
-    class="btn-secondary"
-  >
-    Lelang Saya
-  </router-link>
+  <div class="actions">
+
+    <router-link
+      to="/auctions/create"
+      class="btn-primary"
+    >
+      Buat Lelang
+    </router-link>
+
+    <router-link
+      to="/my-auctions"
+      class="btn-secondary"
+    >
+      Lelang Saya
+    </router-link>
+
+  </div>
 
 </div>
   </div>
+  
 
 
 </div>
@@ -103,7 +129,7 @@ onMounted(() => {
     <div v-else class="grid">
 
       <div
-        v-for="auction in auctions"
+        v-for="auction in filteredAuctions"
         :key="auction.id"
         class="card"
       >

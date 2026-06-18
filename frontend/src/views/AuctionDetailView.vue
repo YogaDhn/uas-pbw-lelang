@@ -8,11 +8,20 @@ type Auction = {
   id: number;
   title: string;
   description: string;
+  image: string;
   end_time: string;
   starting_price: number;
   bid_increment: number;
   status: string;
-  bids: { id: number; user_id: number; amount: number }[];
+  bids: {
+  id: number;
+  user_id: number;
+  amount: number;
+  user?: {
+    id: number;
+    name: string;
+  };
+}[];
 };
 
 type AuctionEndedEvent = {
@@ -174,87 +183,118 @@ onUnmounted(() => {
 
 <template>
   <div class="page" v-if="auction">
+<div class="back-wrapper">
+  <button
+    class="back-btn"
+    @click="$router.push('/')"
+  >
+    ← Kembali ke Daftar Lelang
+  </button>
+</div>
+    <div class="product-layout">
 
-    <!-- HEADER -->
-    <div class="card header-card">
-      <h1>{{ auction.title }}</h1>
-      <p class="desc">{{ auction.description }}</p>
-
-      <div class="status-row">
-        <span class="label">Status:</span>
-
-        <span class="badge" :class="auction.status">
-          {{ auction.status }}
-        </span>
+      <div class="image-section">
+        <img
+          v-if="auction.image"
+          :src="`http://127.0.0.1:8000/storage/${auction.image}`"
+          class="auction-image"
+        />
       </div>
 
-      <div class="countdown">
-        ⏱ {{ countdown }}
+      <div class="info-section">
+
+        <h1>{{ auction.title }}</h1>
+
+        <p class="desc">
+          {{ auction.description }}
+        </p>
+
+        <div class="status-row">
+          <span>Status:</span>
+
+          <span
+            class="badge"
+            :class="auction.status"
+          >
+            {{ auction.status }}
+          </span>
+        </div>
+
+        <div class="countdown">
+          ⏱ {{ countdown }}
+        </div>
+
+        <div class="highest-bid-section">
+
+  <div class="highest-label">
+    Bid Tertinggi
+  </div>
+
+  <div class="highest-price">
+    Rp {{ highestBid }}
+  </div>
+
+</div>
+
+        <input
+          v-model="bidAmount"
+          type="number"
+          class="input"
+          placeholder="Masukkan nominal bid"
+          :disabled="auction.status !== 'active'"
+        />
+
+        <button
+          class="btn"
+          @click="placeBid"
+          :disabled="auction.status !== 'active'"
+        >
+          Bid Sekarang
+        </button>
+
       </div>
+
     </div>
 
-    <!-- WINNER -->
-    <div v-if="isEnded" class="card winner-card">
-      🏆 AUCTION SELESAI
-
-      <p>
-        Pemenang:
-        <b>{{ winner || 'Tidak ada pemenang' }}</b>
-      </p>
-
-      <p>
-        Harga Menang:
-        <b class="price">Rp {{ winningBid ?? 0 }}</b>
-      </p>
-    </div>
-
-    <!-- BID SECTION -->
     <div class="card">
-
-      <h3>Pasang Bid</h3>
-
-      <input
-        v-model="bidAmount"
-        type="number"
-        class="input"
-        placeholder="Masukkan nominal bid"
-        :disabled="auction.status !== 'active'"
-      />
-
-      <button
-  class="btn"
-  @click="placeBid"
-:disabled="auction.status !== 'active'"
+<!-- WINNER -->
+<div
+  v-if="isEnded"
+  class="winner-card"
 >
-  Bid Sekarang
-</button>
+  <h2>🏆 Lelang Selesai</h2>
 
-    </div>
+  <div class="winner-info">
+    <p>
+      Pemenang:
+      <strong>
+        {{ winner || 'Tidak ada pemenang' }}
+      </strong>
+    </p>
 
-    <!-- HIGHEST BID -->
-    <div class="card highlight">
-
-      <h3>Bid Tertinggi</h3>
-
-      <div class="big-price">
-        Rp {{ highestBid }}
-      </div>
-
-    </div>
-
-    <!-- HISTORY -->
-    <div class="card">
-
+    <p>
+      Harga Menang:
+      <strong>
+        Rp {{ winningBid ?? 0 }}
+      </strong>
+    </p>
+  </div>
+</div>
       <h3>Riwayat Bid</h3>
 
       <div
-        v-for="bid in auction.bids"
-        :key="bid.id"
-        class="bid-item"
-      >
-        <div>User ID: {{ bid.user_id }}</div>
-        <div>Rp {{ bid.amount }}</div>
-      </div>
+  v-for="bid in auction.bids"
+  :key="bid.id"
+  class="bid-item"
+>
+  <div>
+    {{ bid.user?.name || 'Unknown User' }}
+  </div>
+
+  <div>
+    Rp {{ Number(bid.amount).toLocaleString('id-ID') }}
+  </div>
+</div>
 
     </div>
 
@@ -266,8 +306,86 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.product-layout{
+  display:flex;
+  gap:30px;
+  background:white;
+  padding:25px;
+  border-radius:16px;
+  margin-bottom:20px;
+  box-shadow:0 6px 20px rgba(0,0,0,.05);
+}
+
+.image-section{
+  flex:1;
+}
+
+.info-section{
+  flex:1;
+}
+
+.highest-price{
+  font-size:32px;
+  font-weight:bold;
+  color:#16a34a;
+  margin:20px 0;
+}
+
+.page{
+  max-width:1200px;
+}
+.auction-image{
+  width:100%;
+  max-height:400px;
+  object-fit:cover;
+  border-radius:12px;
+  margin:15px 0;
+}
+
+.product-layout{
+  display:flex;
+  gap:30px;
+  background:white;
+  padding:25px;
+  border-radius:16px;
+  margin-bottom:20px;
+  box-shadow:0 6px 20px rgba(0,0,0,.05);
+}
+
+.image-section{
+  flex:1;
+}
+
+.info-section{
+  flex:1;
+}
+
+.auction-image{
+  width:100%;
+  height:450px;
+  object-fit:cover;
+  border-radius:12px;
+}
+
+.highest-price{
+  font-size:32px;
+  font-weight:bold;
+  color:#16a34a;
+  margin:20px 0;
+}
+
+@media(max-width:768px){
+  .product-layout{
+    flex-direction:column;
+  }
+
+  .auction-image{
+    height:300px;
+  }
+}
+
 .page {
-  max-width: 900px;
+  max-width: 1200px;
   margin: auto;
   padding: 20px;
   font-family: sans-serif;
@@ -316,6 +434,22 @@ onUnmounted(() => {
   margin-top: 10px;
   font-weight: bold;
 }
+.highest-bid-section{
+  margin:20px 0;
+}
+
+.highest-label{
+  font-size:14px;
+  color:#666;
+  margin-bottom:6px;
+  font-weight:600;
+}
+
+.highest-price{
+  font-size:32px;
+  font-weight:bold;
+  color:#16a34a;
+}
 
 .input {
   width: 100%;
@@ -362,5 +496,50 @@ onUnmounted(() => {
   text-align: center;
   padding: 50px;
   color: #888;
+}
+.auction-image{
+  width:100%;
+  max-height:400px;
+  object-fit:cover;
+  border-radius:12px;
+  margin:15px 0;
+}
+.back-wrapper{
+  margin-bottom:20px;
+}
+
+.back-btn{
+  background:#f3f4f6;
+  border:none;
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.2s;
+}
+
+.back-btn:hover{
+  background:#e5e7eb;
+}
+.winner-card{
+  background:#ecfdf5;
+  border:2px solid #10b981;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+}
+
+.winner-card h2{
+  margin:0 0 12px 0;
+  color:#065f46;
+}
+
+.winner-info p{
+  margin:8px 0;
+  font-size:16px;
+}
+
+.winner-info strong{
+  color:#16a34a;
 }
 </style>

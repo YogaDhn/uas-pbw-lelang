@@ -1,4 +1,4 @@
-/* FONT MODERN */
+FONT MODERN
 body {
   font-family: Inter, system-ui, Arial;
   background: #f4f6fb;
@@ -28,10 +28,11 @@ body {
 }
 
 /* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:20px;
+  justify-content:flex-start;
 }
 
 /* CARD */
@@ -167,19 +168,49 @@ body {
   margin-bottom: 12px;
 }
 
+
+
+.actions a{
+  flex:1;
+  text-align:center;
+}
+
+.search-actions{
+  display:flex;
+  align-items:center;
+  gap:96px;
+  margin-top:24px;
+  margin-bottom:30px;
+}
+
+.search-box{
+  flex:1;
+  width: 820px;
+}
+
+.search-box input{
+  width:100%;
+  padding:14px 16px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  font-size:15px;
+  background:white;
+}
+
 .actions{
   display:flex;
   gap:12px;
-  margin-bottom:20px;
+  flex-shrink:0;
 }
 
 .btn-primary,
 .btn-secondary{
+  padding:14px 24px;
+  border-radius:12px;
   text-decoration:none;
-  padding:10px 16px;
-  border-radius:10px;
-  color:white;
   font-weight:600;
+  white-space:nowrap;
+  text-align:center;
 }
 
 .btn-primary{
@@ -255,11 +286,7 @@ body {
   color:#6b7280;
   font-size:18px;
 }
-.actions{
-  display:flex;
-  gap:12px;
-  margin-top:20px;
-}
+
 
 .btn-primary{
   background:#2563eb;
@@ -288,4 +315,25 @@ body {
 }
 body{
   background:#f3f4f6;
+}
+
+
+
+.search-box{
+  flex:1;
+}
+
+.search-box input{
+  width:100%;
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:12px;
+}
+
+
+
+.btn-primary,
+.btn-secondary{
+  padding:14px 20px;
+  white-space:nowrap;
 }

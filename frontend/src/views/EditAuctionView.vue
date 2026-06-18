@@ -27,25 +27,57 @@ start_time.value = res.data.start_time?.slice(0,16);
 end_time.value = res.data.end_time?.slice(0,16);
 };
 
+const image = ref<File | null>(null);
+
+const handleImage = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+
+  if (target.files?.length) {
+    image.value = target.files[0];
+  }
+};
+
 const updateAuction = async () => {
   try {
+    const formData = new FormData();
 
-    await api.put(`/auctions/${route.params.id}`, {
-  title: title.value,
-  description: description.value,
-  starting_price: starting_price.value,
-  bid_increment: bid_increment.value,
-  start_time: start_time.value,
-  end_time: end_time.value
-});
+    formData.append("title", title.value);
+    formData.append("description", description.value);
+    formData.append(
+      "starting_price",
+      starting_price.value.toString()
+    );
+    formData.append(
+      "bid_increment",
+      bid_increment.value.toString()
+    );
+    formData.append(
+      "start_time",
+      start_time.value
+    );
+    formData.append(
+      "end_time",
+      end_time.value
+    );
 
-    alert("Lelang berhasil diperbarui");
+    formData.append("_method", "PUT");
+
+    if (image.value) {
+      formData.append("image", image.value);
+    }
+
+    await api.post(
+      `/auctions/${route.params.id}`,
+      formData
+    );
+
+    alert("✅ Lelang berhasil diperbarui");
 
     router.push("/my-auctions");
 
   } catch (error) {
     console.log(error);
-    alert("Gagal update");
+    alert("❌ Gagal memperbarui lelang");
   }
 };
 
@@ -54,7 +86,11 @@ onMounted(loadAuction);
 
 <template>
   <div class="edit-page">
-
+<input
+  type="file"
+  accept="image/*"
+  @change="handleImage"
+/>
     <div class="edit-card">
 
       <div class="header">

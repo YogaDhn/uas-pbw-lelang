@@ -63,11 +63,14 @@ public function store(StoreAuctionRequest $request)
         'id' => $auction->id,
         'title' => $auction->title,
         'description' => $auction->description,
+        'image' => $auction->image,
         'starting_price' => $auction->starting_price,
         'bid_increment' => $auction->bid_increment,
         'status' => $auction->status,
+        'start_time' => $auction->start_time,
         'end_time' => $auction->end_time,
         'bids' => $auction->bids()
+    ->with('user')
     ->orderByDesc('amount')
     ->get(),
         'user_id' => $auction->user_id,
@@ -142,7 +145,29 @@ public function winner(Auction $auction)
     UpdateAuctionRequest $request,
     Auction $auction
 )
+
     {
+        if ($request->hasFile('image')) {
+
+    if ($auction->image) {
+        \Storage::disk('public')
+            ->delete($auction->image);
+    }
+
+    $auction->image = $request->file('image')
+        ->store('auctions', 'public');
+}
+
+$auction->title = $request->title;
+$auction->description = $request->description;
+$auction->starting_price = $request->starting_price;
+$auction->bid_increment = $request->bid_increment;
+$auction->start_time = $request->start_time;
+$auction->end_time = $request->end_time;
+
+$auction->save();
+
+return response()->json($auction);
         // Otorisasi pemilik
         if (auth()->id() != $auction->user_id) {
             return response()->json([
@@ -157,7 +182,27 @@ public function winner(Auction $auction)
             ], 403);
         }
 
-        $auction->update($request->validated());
+        if ($request->hasFile('image')) {
+
+    if ($auction->image) {
+        \Storage::disk('public')
+            ->delete($auction->image);
+    }
+
+    $auction->image = $request->file('image')
+        ->store('auctions', 'public');
+}
+
+$auction->title = $request->title;
+$auction->description = $request->description;
+$auction->starting_price = $request->starting_price;
+$auction->bid_increment = $request->bid_increment;
+$auction->start_time = $request->start_time;
+$auction->end_time = $request->end_time;
+
+$auction->save();
+
+return response()->json($auction);
 
         return response()->json($auction);
     }
