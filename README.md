@@ -279,20 +279,13 @@ password
 
 ---
 
-# 🗃️ Entity Relationship Diagram (ERD)
-
-<p align="center">
-  <img src="docs/erd.jpeg" width="100%">
-</p>
-
----
 
 # 🗃️ Entity Relationship Diagram (ERD)
 
 ERD berikut menggambarkan hubungan antara entitas **Users**, **Auctions**, dan **Bids** pada sistem lelang online.
 
 <p align="center">
-  <img src="docs/erd.png" alt="ERD Online Auction System" width="100%">
+  <img src="docs/erd-palingnew.jpeg" alt="ERD Online Auction System" width="100%">
 </p>
 
 ## Relasi Antar Entitas
