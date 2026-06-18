@@ -146,6 +146,12 @@ onMounted(async () => {
     .subscribed(() => {
       console.log("SUBSCRIBED SUCCESS");
     })
+
+    .listen(".OutbidNotification", () => {
+  notification.value =
+    "Kamu sudah dikalahkan bid lain!";
+})
+
     .listen(".auction.ended", (e: AuctionEndedEvent) => {
       console.log("🔥 AUCTION ENDED:", e);
 
@@ -183,6 +189,12 @@ onUnmounted(() => {
 
 <template>
   <div class="page" v-if="auction">
+  <div
+  v-if="notification"
+  class="notification"
+>
+  {{ notification }}
+</div>
 <div class="back-wrapper">
   <button
     class="back-btn"
@@ -491,7 +503,14 @@ onUnmounted(() => {
   padding: 8px 0;
   border-bottom: 1px solid #eee;
 }
-
+.notification{
+  background:#fef3c7;
+  color:#92400e;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:15px;
+  font-weight:600;
+}
 .loading {
   text-align: center;
   padding: 50px;

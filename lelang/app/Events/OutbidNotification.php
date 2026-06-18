@@ -27,17 +27,17 @@ class OutbidNotification implements ShouldBroadcast
     $this->newBid = $newBid;
 }
 
-    public function broadcastOn(): array
-    {
-        return [
-            new Channel(
-                'user.' . $this->oldBid->user_id
-            )
-        ];
-    }
+public function broadcastOn(): array
+{
+    return [
+        new Channel(
+            'auction.' . $this->oldBid->auction_id
+        )
+    ];
+}
 
     public function broadcastAs(): string
-    {
-        return 'outbid.notification';
-    }
+{
+    return 'OutbidNotification';
+}
 }

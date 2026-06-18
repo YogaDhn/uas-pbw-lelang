@@ -11,7 +11,7 @@ use App\Events\OutbidNotification;
 use Illuminate\Support\Facades\DB;
 class BidController extends Controller
 {
-    public function store(
+public function store(
     Request $request,
     Auction $auction
 )
@@ -58,6 +58,7 @@ class BidController extends Controller
                 );
             }
 
+            // Buat bid baru
             $bid = Bid::create([
                 'auction_id' => $auction->id,
                 'user_id' => auth()->id(),
@@ -65,12 +66,10 @@ class BidController extends Controller
                 'is_winner' => false
             ]);
 
-            \Log::info('EVENT BIDPLACED DIPANGGIL');
+            // Broadcast realtime bid
+            event(new BidPlaced($bid));
 
-event(new BidPlaced($bid));
-
-\Log::info('EVENT BIDPLACED SELESAI');
-
+            // Kirim notifikasi ke bidder sebelumnya
             if (
                 $oldHighestBid &&
                 $oldHighestBid->user_id != auth()->id()
@@ -85,12 +84,6 @@ event(new BidPlaced($bid));
 
             return $bid;
         });
-
-        \Log::info('BidPlaced Event Fired', [
-            'bid_id' => $bid->id,
-            'auction_id' => $auction->id,
-            'amount' => $bid->amount
-        ]);
 
         return response()->json([
             'message' => 'Bid berhasil',
