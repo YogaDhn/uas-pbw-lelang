@@ -314,51 +314,99 @@ Satu lelang dapat memiliki banyak penawaran.
 Auctions (1) -------- (N) Bids
 ```
 
+---
+
 ## Struktur Tabel
 
 ### Users
 
-| Field      | Tipe      |
-| ---------- | --------- |
-| id         | bigint    |
-| name       | varchar   |
-| email      | varchar   |
-| password   | varchar   |
-| created_at | timestamp |
-| updated_at | timestamp |
+| Field | Tipe |
+|--------|--------|
+| id | bigint |
+| name | varchar |
+| email | varchar |
+| password | varchar |
 
 ### Auctions
 
-| Field          | Tipe      |
-| -------------- | --------- |
-| id             | bigint    |
-| user_id        | bigint    |
-| title          | varchar   |
-| description    | text      |
-| image          | varchar   |
-| starting_price | decimal   |
-| bid_increment  | decimal   |
-| start_time     | datetime  |
-| end_time       | datetime  |
-| status         | varchar   |
-| created_at     | timestamp |
-| updated_at     | timestamp |
+| Field | Tipe |
+|--------|--------|
+| id | bigint |
+| user_id | bigint |
+| title | varchar |
+| description | text |
+| image | varchar |
+| starting_price | decimal |
+| bid_increment | decimal |
+| start_time | datetime |
+| end_time | datetime |
+| status | varchar |
 
 ### Bids
 
-| Field      | Tipe      |
-| ---------- | --------- |
-| id         | bigint    |
-| auction_id | bigint    |
-| user_id    | bigint    |
-| amount     | decimal   |
-| is_winner  | boolean   |
-| created_at | timestamp |
-| updated_at | timestamp |
+| Field | Tipe |
+|--------|--------|
+| id | bigint |
+| auction_id | bigint |
+| user_id | bigint |
+| amount | decimal |
+| is_winner | boolean |
 
-```
+---
+
+## Aturan Relasi
+
+### users.id → auctions.user_id
+
+Menunjukkan pemilik atau pembuat lelang.
+
+### users.id → bids.user_id
+
+Menunjukkan pengguna yang melakukan penawaran.
+
+### auctions.id → bids.auction_id
+
+Menunjukkan bid yang terkait dengan suatu lelang.
+
+---
+
+## Deskripsi Entitas
+
+### Users
+
+Menyimpan data akun pengguna yang dapat berperan sebagai penjual maupun penawar.
+
+### Auctions
+
+Menyimpan informasi barang lelang yang dibuat oleh pengguna, termasuk judul barang, deskripsi, gambar barang, harga awal, kenaikan bid minimum, jadwal lelang, dan status lelang.
+
+### Bids
+
+Menyimpan seluruh riwayat penawaran yang dilakukan pengguna pada suatu lelang serta penanda pemenang lelang melalui atribut `is_winner`.
+
+---
+
+## Kardinalitas Relasi
+
+```text
++-----------+          +------------+          +-----------+
+|   USERS   |          |  AUCTIONS  |          |   BIDS    |
++-----------+          +------------+          +-----------+
+| id (PK)   |<------1--| user_id FK |          | id (PK)   |
+| name      |          | id (PK)    |--1----<--| auction_id |
+| email     |          | title      |          | user_id    |
+| password  |          | description|          | amount     |
++-----------+          | image      |          | is_winner  |
+       ^               | start_time |          +-----------+
+       |               | end_time   |
+       |               | status     |
+       |               +------------+
+       |
+       +---------------------<------+
+               user_id FK
 ```
 
+---
 
 # 🧪 Skenario Pengujian
 
