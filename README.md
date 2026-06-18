@@ -1,8 +1,6 @@
 # 🏷️ Online Auction System
 
-## Ujian Akhir Semester (UAS)
-
-### Pemrograman Berbasis Web
+## Ujian Akhir Semester (UAS) - Pemrograman Berbasis Web
 
 Sistem Lelang Online berbasis **Laravel 12**, **Vue 3**, **MySQL**, **Laravel Sanctum**, dan **Laravel Reverb** yang mendukung proses lelang secara realtime, pengelolaan barang lelang, serta penentuan pemenang otomatis.
 
@@ -10,19 +8,23 @@ Sistem Lelang Online berbasis **Laravel 12**, **Vue 3**, **MySQL**, **Laravel Sa
 
 # 👨‍💻 Kelompok 5
 
-| Nama                      | NIM        |
-| ------------------------- | ---------- |
-| Ilham Maulana Kusuma      | 2401010004 |
-| I Putu Yoga Dhandi Wijaya | 2401010014 |
-| I Gede Sumeryasa          | 2401010033 |
+| Nama                      | NIM        | GitHub               |
+| ------------------------- | ---------- | -------------------- |
+| Ilham Maulana Kusuma      | 2401010004 | @ilhammaulana05-sudo |
+| I Putu Yoga Dhandi Wijaya | 2401010014 | @YogaDhn             |
+| I Gede Sumeryasa          | 2401010033 | @sumeragede57        |
 
 ---
 
 # 📖 Deskripsi Sistem
 
-Online Auction System merupakan aplikasi berbasis web yang memungkinkan pengguna untuk membuat lelang, mengikuti lelang, melakukan penawaran harga (bidding), serta menerima pembaruan data secara realtime menggunakan Laravel Reverb.
+Online Auction System merupakan aplikasi berbasis web yang memungkinkan pengguna untuk:
 
-Sistem dirancang untuk memberikan pengalaman lelang yang interaktif dengan fitur notifikasi realtime, validasi penawaran, dan penentuan pemenang secara otomatis saat waktu lelang berakhir.
+* Membuat lelang barang
+* Mengikuti lelang
+* Melakukan penawaran harga (bidding)
+* Menerima pembaruan data secara realtime
+* Menentukan pemenang secara otomatis ketika lelang berakhir
 
 ---
 
@@ -38,11 +40,11 @@ Sistem dirancang untuk memberikan pengalaman lelang yang interaktif dengan fitur
 ## Auction Management
 
 * Create Auction
-* Read Auction
-* Update Auction
+* Edit Auction
 * Delete Auction
 * My Auctions
-* Upload Image Barang
+* Upload Gambar Barang
+* Edit Gambar Barang
 
 ## Bidding System
 
@@ -58,8 +60,8 @@ Sistem dirancang untuk memberikan pengalaman lelang yang interaktif dengan fitur
 * Laravel Reverb
 * Laravel Echo
 * Realtime Bid Update
-* Outbid Notification
 * Realtime Auction Result
+* Winner Announcement
 
 ## Auction Lifecycle
 
@@ -96,9 +98,9 @@ Sistem dirancang untuk memberikan pengalaman lelang yang interaktif dengan fitur
 
 Pastikan perangkat telah terinstall:
 
-* PHP 8.2 atau lebih baru
+* PHP 8.2+
 * Composer
-* Node.js 18 atau lebih baru
+* Node.js 18+
 * NPM
 * MySQL
 * Git
@@ -107,54 +109,30 @@ Pastikan perangkat telah terinstall:
 
 # 🚀 Instalasi Proyek
 
-## 1. Clone Repository
+## Clone Repository
 
 ```bash
-git clone <repository-url>
-cd Project_UAS_PBW
+git clone https://github.com/YogaDhn/uas-pbw-lelang.git
+cd uas-pbw-lelang
 ```
 
----
-
-## 2. Instalasi Backend
-
-Masuk ke folder backend:
+## Backend
 
 ```bash
 cd lelang
-```
 
-Install dependency Laravel:
-
-```bash
 composer install
-```
 
-Copy file environment:
-
-```bash
 cp .env.example .env
-```
 
-Generate application key:
-
-```bash
 php artisan key:generate
 ```
 
----
-
-## 3. Instalasi Frontend
-
-Masuk ke folder frontend:
+## Frontend
 
 ```bash
-cd ../frontend
-```
+cd frontend
 
-Install dependency:
-
-```bash
 npm install
 ```
 
@@ -162,19 +140,13 @@ npm install
 
 # ⚙️ Konfigurasi Database
 
-Buat database MySQL:
+Buat database:
 
 ```sql
 CREATE DATABASE auction_db;
 ```
 
-Edit file:
-
-```text
-lelang/.env
-```
-
-Sesuaikan konfigurasi berikut:
+Konfigurasi pada file `.env`
 
 ```env
 DB_CONNECTION=mysql
@@ -189,13 +161,7 @@ DB_PASSWORD=
 
 # ⚡ Konfigurasi Laravel Reverb
 
-Edit file:
-
-```text
-lelang/.env
-```
-
-Tambahkan konfigurasi berikut:
+Tambahkan pada `.env`
 
 ```env
 BROADCAST_CONNECTION=reverb
@@ -215,177 +181,217 @@ REVERB_SCHEME=http
 
 # 🗄️ Migrasi Database
 
-Menjalankan migrasi:
-
 ```bash
 php artisan migrate
 ```
 
-Jika menggunakan seeder:
+atau
 
 ```bash
 php artisan migrate:fresh --seed
 ```
 
 ---
-▶️ Menjalankan Aplikasi
-Backend Server
-cd lelang
+
+# ▶️ Menjalankan Aplikasi
+
+## Backend
+
+```bash
 php artisan serve
+```
 
-Aplikasi backend berjalan pada:
+Backend berjalan pada:
 
+```text
 http://127.0.0.1:8000
-Frontend Server
-cd frontend
+```
+
+---
+
+## Frontend
+
+```bash
 npm run dev
+```
 
-Aplikasi frontend berjalan pada:
+Frontend berjalan pada:
 
+```text
 http://localhost:5173
-Queue Worker
+```
 
-Digunakan untuk memproses job dan event queue.
+---
 
+## Queue Worker
+
+```bash
 php artisan queue:work
-Scheduler
+```
 
-Digunakan untuk memperbarui status lelang dan menutup lelang secara otomatis.
+---
 
+## Scheduler
+
+```bash
 php artisan schedule:work
-Laravel Reverb
+```
 
-Digunakan untuk komunikasi realtime.
+---
 
+## Laravel Reverb
+
+```bash
 php artisan reverb:start
+```
 
-🔑 Akun Demo
-Penjual
-Email	Password
-yoga@gmail.com	password
-Penawar
-Email	Password
-stella@gmail.com	password
+---
 
-🗃️ Entity Relationship Diagram (ERD)
-Tabel Users
-Field	Tipe
-id	bigint
-name	varchar
-email	varchar
-password	varchar
-created_at	timestamp
-updated_at	timestamp
-Tabel Auctions
-Field	Tipe
-id	bigint
-user_id	bigint
-title	varchar
-description	text
-image	varchar
-starting_price	decimal
-bid_increment	decimal
-start_time	datetime
-end_time	datetime
-status	varchar
-created_at	timestamp
-updated_at	timestamp
-Tabel Bids
-Field	Tipe
-id	bigint
-auction_id	bigint
-user_id	bigint
-amount	decimal
-is_winner	boolean
-created_at	timestamp
-updated_at	timestamp
-Relasi Antar Tabel
-USERS
-│
-├──< AUCTIONS
-│
-└──< BIDS
+# 🔑 Akun Demo
 
-AUCTIONS
-│
-└──< BIDS
-ERD Diagram
-+-------------------+
-|       USERS       |
-+-------------------+
-| id (PK)           |
-| name              |
-| email             |
-| password          |
-+-------------------+
-          |
-          | 1
-          |
-          | N
-+-------------------+
-|     AUCTIONS      |
-+-------------------+
-| id (PK)           |
-| user_id (FK)      |
-| title             |
-| description       |
-| image             |
-| starting_price    |
-| bid_increment     |
-| start_time        |
-| end_time          |
-| status            |
-+-------------------+
-          |
-          | 1
-          |
-          | N
-+-------------------+
-|       BIDS        |
-+-------------------+
-| id (PK)           |
-| auction_id (FK)   |
-| user_id (FK)      |
-| amount            |
-| is_winner         |
-+-------------------+
-          ^
-          |
-          |
-        USERS
-📂 Struktur Folder
-Project_UAS_PBW
-│
-├── lelang
-│   ├── app
-│   ├── config
-│   ├── database
-│   ├── routes
-│   ├── storage
-│   └── public
-│
-└── frontend
-    ├── src
-    │   ├── views
-    │   ├── router
-    │   ├── stores
-    │   ├── services
-    │   └── assets
-    │
-    └── public
-    
-🧪 Skenario Pengujian
-Login sebagai Penjual.
-Membuat barang lelang baru.
-Login sebagai Penawar pada browser berbeda.
-Membuka halaman detail lelang yang sama.
-Melakukan bid.
-Bid tertinggi diperbarui secara realtime.
-Sistem mengirim notifikasi ketika bid dikalahkan.
-Setelah waktu lelang berakhir, sistem menentukan pemenang secara otomatis.
+## Penjual
 
-📌 Catatan
-Untuk menjalankan seluruh fitur realtime secara optimal, pastikan backend, frontend, queue worker, scheduler, dan Laravel Reverb berjalan secara bersamaan.
+Email:
 
-📄 Lisensi
-Proyek ini dibuat untuk memenuhi tugas Ujian Akhir Semester (UAS) Mata Kuliah Pemrograman Berbasis Web.
+```text
+yoga@gmail.com
+```
+
+Password:
+
+```text
+password
+```
+
+## Penawar
+
+Email:
+
+```text
+stella@gmail.com
+```
+
+Password:
+
+```text
+password
+```
+
+---
+
+# 🗃️ Entity Relationship Diagram (ERD)
+
+<p align="center">
+  <img src="docs/erd.png" width="100%">
+</p>
+
+---
+
+# 📸 Dokumentasi Tampilan Sistem
+
+## Login
+
+<p align="center">
+  <img src="docs/login.png" width="100%">
+</p>
+
+## Register
+
+<p align="center">
+  <img src="docs/register.png" width="100%">
+</p>
+
+## Daftar Lelang
+
+<p align="center">
+  <img src="docs/auction-list.png" width="100%">
+</p>
+
+## Detail Lelang
+
+<p align="center">
+  <img src="docs/auction-detail.png" width="100%">
+</p>
+
+## Buat Lelang
+
+<p align="center">
+  <img src="docs/create-auction.png" width="100%">
+</p>
+
+## Lelang Saya
+
+<p align="center">
+  <img src="docs/my-auctions.png" width="100%">
+</p>
+
+## Pemenang Lelang
+
+<p align="center">
+  <img src="docs/winner.png" width="100%">
+</p>
+
+---
+
+# 🧪 Skenario Pengujian
+
+1. Login sebagai Penjual.
+2. Membuat barang lelang baru.
+3. Login sebagai Penawar pada browser berbeda.
+4. Membuka halaman detail lelang yang sama.
+5. Melakukan bid.
+6. Bid tertinggi diperbarui secara realtime.
+7. Riwayat bid diperbarui secara realtime.
+8. Sistem menentukan pemenang otomatis saat lelang berakhir.
+9. Informasi pemenang ditampilkan pada halaman detail lelang.
+
+---
+
+# 📂 Struktur Folder
+
+```text
+PROJECT_UAS_PBW
+│
+├── app
+├── bootstrap
+├── config
+├── database
+├── public
+├── routes
+├── docs
+│   ├── erd.png
+│   ├── login.png
+│   ├── register.png
+│   ├── auction-list.png
+│   ├── auction-detail.png
+│   ├── create-auction.png
+│   ├── my-auctions.png
+│   └── winner.png
+│
+├── frontend
+│   ├── src
+│   ├── router
+│   ├── services
+│   ├── stores
+│   └── views
+│
+└── README.md
+```
+
+---
+
+# 📌 Catatan
+
+Agar fitur realtime berjalan dengan baik, pastikan service berikut aktif secara bersamaan:
+
+* Laravel Server
+* Vue Frontend
+* Queue Worker
+* Scheduler
+* Laravel Reverb
+
+---
+
+# 📄 Lisensi
+
+Proyek ini dibuat untuk memenuhi tugas Ujian Akhir Semester (UAS) Mata Kuliah Pemrograman Berbasis Web Program Studi Sistem Informasi.
