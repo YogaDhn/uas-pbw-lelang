@@ -14,4 +14,4 @@ Schedule::command(
 
 Schedule::command(
     'app:close-auction-command'
-)->everyMinute();
+)->everySecond();

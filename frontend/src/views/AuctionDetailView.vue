@@ -142,23 +142,35 @@ onMounted(async () => {
 
   countdownInterval = setInterval(updateCountdown, 1000);
 
+const currentUser = JSON.parse(
+  localStorage.getItem("user") || "{}"
+
+);
   echo.channel(`auction.${auctionId}`)
     .subscribed(() => {
       console.log("SUBSCRIBED SUCCESS");
     })
 
-    .listen(".OutbidNotification", () => {
-  notification.value =
-    "Kamu sudah dikalahkan bid lain!";
+
+    .listen(".auction.ended", async (e: AuctionEndedEvent) => {
+    console.log("===== AUCTION ENDED EVENT =====");
+  console.log(e);
+
+  isEnded.value = true;
+
+  if (auction.value) {
+    auction.value.status = "ended";
+  }
+
+  winner.value = e.winner ?? "-";
+  winningBid.value = e.winning_bid ?? 0;
+
+    if (auction.value) {
+        auction.value.status = "ended";
+    }
 })
 
-    .listen(".auction.ended", (e: AuctionEndedEvent) => {
-      console.log("🔥 AUCTION ENDED:", e);
 
-      winner.value = e.winner ?? "-";
-      winningBid.value = e.winning_bid ?? 0;
-      isEnded.value = true;
-    })
    .listen(".bid.placed", async (e) => {
 
   console.log("================================");
@@ -173,11 +185,21 @@ onMounted(async () => {
   );
 
 })
-    .listen(".OutbidNotification", () => {
-     notification.value = "Kamu sudah dikalahkan bid lain!";
-setTimeout(() => notification.value = null, 3000);
-      loadAuction();
-    });
+    .listen(".OutbidNotification", (e: any) => {
+
+  // Hanya tampilkan ke user yang kalah
+  if (e.old_user_id !== currentUser.id) {
+    return;
+  }
+
+  notification.value = e.message;
+
+  setTimeout(() => {
+    notification.value = null;
+  }, 3000);
+
+  loadAuction();
+});
 });
 
 /* CLEANUP */

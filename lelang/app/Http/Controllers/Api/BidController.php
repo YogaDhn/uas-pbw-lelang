@@ -74,6 +74,10 @@ public function store(
                 $oldHighestBid &&
                 $oldHighestBid->user_id != auth()->id()
             ) {
+                \Log::info('OUTBID EVENT', [
+        'old_user' => $oldHighestBid->user_id,
+        'new_user' => auth()->id(),
+    ]);
                 event(
                     new OutbidNotification(
                         $oldHighestBid,

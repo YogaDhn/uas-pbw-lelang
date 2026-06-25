@@ -2,9 +2,6 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel(
-    'auction.{auctionId}',
-    function ($user, $auctionId) {
-        return true;
-    }
-);
+Broadcast::channel('user.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+});

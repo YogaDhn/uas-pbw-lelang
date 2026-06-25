@@ -25,15 +25,7 @@ public function user()
 
 public function updateStatus()
 {
-    if ($this->start_time <= now() && $this->end_time > now()) {
-        $this->status = 'active';
-    }
-
-    if ($this->end_time <= now()) {
-        $this->status = 'ended';
-    }
-
-    $this->save();
+    
 }
 
 public function getStatusAttribute($value)
